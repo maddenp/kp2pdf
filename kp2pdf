@@ -1,0 +1,22 @@
+#!/bin/bash
+
+die() { echo $1; exit 1; }
+
+test -z "$1" -o -z "$2" && die "Usage: $(basename $0) <infile> <outfile>"
+
+infile=$1
+outfile=$2
+test -r $infile || die "Cannot read $infile"
+
+jarfile=$(dirname $0)/kp2html.jar
+test -f $jarfile || die "Cannot read $jarfile"
+
+echo -n "Password: "
+read -s PDF_PASSWORD
+echo
+echo -n "  Verify: "
+read -s PDF_PASSWORD_VERIFY
+echo
+test "$PDF_PASSWORD" != "$PDF_PASSWORD_VERIFY" && echo "Mismatch!" && exit 1
+
+java -jar $jarfile | wkhtmltopdf - /dev/stdout | pdftk - output $outfile user_pw $PDF_PASSWORD
