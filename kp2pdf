@@ -19,4 +19,4 @@ read -s PDF_PASSWORD_VERIFY
 echo
 test "$PDF_PASSWORD" != "$PDF_PASSWORD_VERIFY" && echo "Mismatch!" && exit 1
 
-java -jar $jarfile | wkhtmltopdf - /dev/stdout | pdftk - output $outfile user_pw $PDF_PASSWORD
+java -jar $jarfile $infile | wkhtmltopdf - /dev/stdout | pdftk - output $outfile user_pw $PDF_PASSWORD
