@@ -4,7 +4,7 @@
   (:require [clojure.java.io :as io])
   (:require [clojure.string :as s]))
 
-(declare table)
+(declare table tr)
 
 (defn entry [e]
   (let [group (first e)
@@ -29,11 +29,14 @@
 
 (defn table [info]
   ["<table border=0>"
-   "<tr><td valign=top><b>username</b></td><td>" (:username info) "</td></tr>"
-   "<tr><td valign=top><b>password</b></td><td>" (:password info) "</td></tr>"
-   "<tr><td valign=top><b>url</b></td><td>" (:url info) "</td></tr>"
-   "<tr><td valign=top><b>notes</b></td><td>" (s/replace (:notes info) #"\n" "</br>") "</td></tr>"
+   (tr "username" (:username info))
+   (tr "password" (:password info))
+   (tr "url" (:url info))
+   (tr "notes" (s/replace (:notes info) #"\n" "</br>"))
    "</table>"])
+
+(defn tr [k v]
+  (str "<tr><td valign=top><b>" k "</b></td><td>" v "</td></tr>"))
 
 (defn -main [& args]
   (try
