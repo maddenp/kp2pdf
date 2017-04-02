@@ -13,7 +13,6 @@
         keys [:username :password :url :notes]]
     {group [[title (apply hash-map (interleave keys info))]]}))
 
-
 (defn group [g]
   (let [entries (sort #(compare (first %1) (first %2)) (val g))]
     (conj ["<h1>" (key g) "</h1>"]
