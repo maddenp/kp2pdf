@@ -8,15 +8,17 @@ infile=$1
 outfile=$2
 test -r $infile || die "Cannot read $infile"
 
-jarfile=$(dirname $0)/kp2html.jar
+jarfile=$(dirname $(readlink -f $0))/kp2html.jar
 test -f $jarfile || die "Cannot read $jarfile"
 
 echo -n "Password: "
-read -s PDF_PASSWORD
+read -s password
 echo
 echo -n "  Verify: "
-read -s PDF_PASSWORD_VERIFY
+read -s verify
 echo
-test "$PDF_PASSWORD" != "$PDF_PASSWORD_VERIFY" && echo "Mismatch!" && exit 1
+test "$password" != "$verify" && echo "Mismatch!" && exit 1
 
-java -jar $jarfile $infile | wkhtmltopdf - /dev/stdout | pdftk - output $outfile user_pw $PDF_PASSWORD
+tmp=$(mktemp /tmp/$(basename $0).XXXXXX)
+java -jar $jarfile $infile | wkhtmltopdf - $tmp && qpdf --encrypt $password $password 256 -- $tmp $outfile
+rm -f $tmp
