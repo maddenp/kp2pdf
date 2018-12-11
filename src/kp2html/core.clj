@@ -4,7 +4,13 @@
   (:require [clojure.java.io :as io])
   (:require [clojure.string :as s]))
 
-(declare table tr)
+(declare item tr)
+
+(defn body [info]
+  [(item "username" (:username info))
+   (item "password" (:password info))
+   (item "url" (:url info))
+   (item "notes" (s/replace (:notes info) #"\n" "</br>"))])
 
 (defn entry [e]
   (let [group (first e)
@@ -17,25 +23,16 @@
   (let [entries (sort #(compare (first %1) (first %2)) (val g))]
     (conj ["<h1>" (key g) "</h1>"]
           (vec (for [e entries]
-                 (conj ["<h2>" (first e) "</h2>"]
-                       (table (last e))))))))
+                 (conj ["<h1>" (first e) "</h1>"]
+                       (body (last e))))))))
 
 (defn html [groups]
   (let [top ["<!doctype html>"
-             "<meta charset='utf-8'>"
-             "<style>table{display:block}</style>"]]
+             "<meta charset='utf-8'>"]]
     (apply str (flatten (reduce conj top (map #(group %) groups))))))
 
-(defn table [info]
-  ["<table border=0>"
-   (tr "username" (:username info))
-   (tr "password" (:password info))
-   (tr "url" (:url info))
-   (tr "notes" (s/replace (:notes info) #"\n" "</br>"))
-   "</table>"])
-
-(defn tr [k v]
-  (str "<tr><td valign=top><b>" k "</b></td><td>" v "</td></tr>"))
+(defn item [k v]
+  (when (not (s/blank? v)) (str "<p><b>" k "</b></p><p><pre>" v "</pre></p>")))
 
 (defn -main [& args]
   (try
