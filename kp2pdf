@@ -20,5 +20,5 @@ echo
 test "$password" != "$verify" && echo "Mismatch!" && exit 1
 
 tmp=$(mktemp /tmp/$(basename $0).XXXXXX)
-java -jar $jarfile $infile | wkhtmltopdf - $tmp && qpdf --encrypt $password $password 128 --use-aes=n -- $tmp $outfile
+java -jar $jarfile $infile | wkhtmltopdf - $tmp && qpdf --encrypt $password $password 256 -- $tmp $outfile
 rm -f $tmp
