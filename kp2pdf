@@ -2,11 +2,13 @@
 
 die() { echo $1; exit 1; }
 
-test -z "$1" -o -z "$2" && die "Usage: $(basename $0) <infile> <outfile>"
+test -z "$1" && die "Usage: $(basename $0) <csvfile>"
 
 infile=$1
-outfile=$2
 test -r $infile || die "Cannot read $infile"
+
+outfile=${infile%.csv}.pdf
+test -e $outfile && die "Output file $outfile already exists"
 
 jarfile=$(dirname $(readlink -f $0))/kp2html.jar
 test -f $jarfile || die "Cannot read $jarfile"
